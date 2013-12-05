@@ -34,6 +34,15 @@ bool loadArguments(int argc, char *argv[], char *path, char *name){
 }
 
 bool loadData(char *path, double ***A) {
+	/*
+	 * plik przykladowy
+	 *
+	 * 4
+	 * 11 12 13 14
+	 * 21 22 23 24
+	 * 31 32 33 34
+	 * 41 42 43 44
+	 */
 
 	FILE *f;
 
@@ -44,12 +53,10 @@ bool loadData(char *path, double ***A) {
 		return false;
 	}
 
-	fscanf(f, "%d", &M);
-	fscanf(f, " %d\n", &N);
+	fscanf(f, "%d", &SIZE);
 
 	mallocMatrix(A);
 	setMatrix(f,A);
-
     fclose(f);
 
     return true;
@@ -58,11 +65,10 @@ bool loadData(char *path, double ***A) {
 void setMatrix(FILE *f, double ***A) {
 	int i , j;
 
-	for(i=0; i<M; i++)
-		for(j=0; j<N; j++) {
+	for(i=0; i<SIZE; i++) //wiersze
+		for(j=0; j<SIZE; j++) //kolumny
 			fscanf(f, " %lf", &(*A)[i][j]);
-			//printf("wartosc macierzy = %f\n", (*A)[i][j]);
-		}
+
 
 }
 

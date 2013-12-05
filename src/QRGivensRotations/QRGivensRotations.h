@@ -11,7 +11,7 @@
 #include <math.h>
 #include "../MatrixOperation/matrixOperation.h"
 
-extern int M, N;
+extern int SIZE;
 
 void qrGivensRotations(double ***A);
 void setMatrixG(double ***G, int i, int j, double c, double s);

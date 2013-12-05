@@ -12,7 +12,7 @@
 #include "../MatrixOperation/matrixOperation.h"
 #include "../bool.h"
 
-extern int M, N;
+extern int SIZE;
 
 bool loadArguments(int argc, char *argv[], char *path, char *name);
 bool loadData(char *path, double ***A);

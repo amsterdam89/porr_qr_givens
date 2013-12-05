@@ -11,12 +11,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-extern int M, N;
+extern int SIZE;
 
 void mallocMatrix(double ***A);
-void mallocMatrixReverse(double ***A);
 void freeMatrix(double ***A);
-void freeMatrixReverse(double ***A);
 void printMatrix(double ***A, char *s);
 
 void copyArray(double *** R, double ***A);

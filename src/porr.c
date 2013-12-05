@@ -15,7 +15,7 @@
 
 extern void QRGivensRotations(double ***A);
 
-int M, N; //ilość wierszy i kolumn macierzy
+int SIZE; //liczba wierszy i kolumn
 
 
 int main(int argc, char *argv[]) {
@@ -24,18 +24,18 @@ int main(int argc, char *argv[]) {
     char *path = NULL;
     char *name = NULL;
 
-	argc = 2; //TODO
+	argc = 2; //TODO do usuniecia
 
 	if(loadArguments(argc, argv, path, name) ) {
 
-		path = "/home/amsterdam/workspace/porr_file.txt"; //TODO
+		path = "/home/amsterdam/workspace/porr_file.txt"; //TODO do usuniecia
 
 		if(loadData(path, &A)) {
 
 			//printf("wartosc macierzy = %f\n", A[2][2]);
 
-			QRGivensRotations(&A); //TODO error in algorithm
-			//TODO jeszcze wymnożyć i zwrócić Q i R
+			QRGivensRotations(&A);
+			//TODO jeszcze wymnożyć i zwrócić Q i R oraz dodać jakieś czasy
 
 
 			freeMatrix(&A);

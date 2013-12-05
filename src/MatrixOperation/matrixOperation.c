@@ -9,31 +9,15 @@
 void mallocMatrix(double ***A) {
 	int i;
 
-	*A =  malloc(M * sizeof *(*A));
-	for (i = 0; i < M; i++)
-		(*A)[i] = malloc(N * sizeof *(*A)[i]);
-}
-
-void mallocMatrixReverse(double ***A) {
-	int i;
-
-	*A =  malloc(N * sizeof *(*A));
-	for (i = 0; i < N; i++)
-		(*A)[i] = malloc(M * sizeof *(*A)[i]);
+	*A =  malloc(SIZE * sizeof *(*A));
+	for (i = 0; i < SIZE; i++)
+		(*A)[i] = malloc(SIZE * sizeof *(*A)[i]);
 }
 
 void freeMatrix(double ***A) {
 	int i;
 
-    for (i = 0; i < M; i++)
-    	free((*A)[i]);
-    free(*A);
-}
-
-void freeMatrixReverse(double ***A) {
-	int i;
-
-    for (i = 0; i < N; i++)
+    for (i = 0; i < SIZE; i++)
     	free((*A)[i]);
     free(*A);
 }
@@ -42,21 +26,8 @@ void printMatrix(double ***A, char *s) {
 	int i, j;
 
 	printf("wartosc macierzy %s\n", s);
-	for(i=0; i<M; i++) {
-		for(j=0; j<N; j++) {;
-			printf("\t%f", (*A)[i][j]);
-		}
-		printf("\n");
-	}
-
-}
-
-void printMatrixReverse(double ***A, char *s) {
-	int i, j;
-
-	printf("wartosc macierzy %s\n", s);
-	for(i=0; i<N; i++) {
-		for(j=0; j<M; j++) {;
+	for(i=0; i<SIZE; i++) {
+		for(j=0; j<SIZE; j++) {;
 			printf("\t%f", (*A)[i][j]);
 		}
 		printf("\n");
@@ -65,34 +36,47 @@ void printMatrixReverse(double ***A, char *s) {
 }
 
 void copyArray(double *** R, double ***A) {
+	//mozna zrownoleglic fora
 	int i, j;
 
-	for(i=0; i<M; i++)
-		for(j=0; j<N; j++) {
+	for(i=0; i<SIZE; i++)
+		for(j=0; j<SIZE; j++) {
 			(*R)[i][j] = (*A)[i][j];
 
 		}
 }
 
 void setEye(double ***A) {
+	//mozna zrownoleglic fora
 	int i, j;
 
-	for(i=0; i<M; i++)
-		for(j=0; j<N; j++)
+	for(i=0; i<SIZE; i++)
+		for(j=0; j<SIZE; j++)
 			if(i == j)
 				(*A)[i][j] = 1.0;
 			else
 				(*A)[i][j] = 0.0;
 }
 
+void setZeros(double ***A) {
+	// obowiazkowe
+	//mozna zrownoleglic fora
+	int i, j;
+
+	for(i=0; i<SIZE; i++)
+		for(j=0; j<SIZE; j++)
+				(*A)[i][j] = 0.0;
+}
+
 void transposition(double ***A) {
+	//mozna zrownoleglic fora
 	int i, j;
 	double **tmp;
 
-	mallocMatrixReverse(&tmp);
+	mallocMatrix(&tmp);
 
-	for(i=0; i<M; i++)
-		for(j=0; j<N; j++) {
+	for(i=0; i<SIZE; i++)
+		for(j=0; j<SIZE; j++) {
 			tmp[j][i] = (*A)[i][j];
 		}
 
@@ -101,43 +85,47 @@ void transposition(double ***A) {
 
 }
 
-void multiplyMatrixToSecondWithTransposition(double *** A, double ***B) {
+void multiplyMatrix(double *** A, double ***B, double ***tmp) {
+	//mozna zrownoleglic fora
 	int i, j, k;
+
+
+	for(i=0; i<SIZE; i++)
+		for(j=0; j<SIZE; j++)
+			for(k=0; k<SIZE; k++) {
+				(*tmp)[i][j] += ( (*A)[i][k] * (*B)[k][j] );
+			}
+}
+
+void multiplyMatrixToSecondWithTransposition(double *** A, double ***B) {
+
 	double **tmp, **tmpTranspositionMatrix;
 
 	mallocMatrix(&tmp);
 	mallocMatrix(&tmpTranspositionMatrix);
+	setZeros(&tmp);
 
 	copyArray(&tmpTranspositionMatrix, A);
-	//printMatrix(&tmpTranspositionMatrix, "macierz przede transpozycja");
+	printMatrix(&tmpTranspositionMatrix, "macierz przede transpozycja");
 	transposition(&tmpTranspositionMatrix);
-	//printMatrixReverse(&tmpTranspositionMatrix, "macierz po transpozycji");
+	printMatrix(&tmpTranspositionMatrix, "macierz po transpozycja");
 
-	for(i=0; i<M; i++)
-		for(j=0; j<N; j++)
-			for(k=0; k<N; k++) {
-				tmp[i][j] += tmpTranspositionMatrix[i][k] * (*B)[k][j];
-			}
+	multiplyMatrix(&tmpTranspositionMatrix, B, &tmp);
 
 	freeMatrix(B);
-	freeMatrixReverse(&tmpTranspositionMatrix);
+	freeMatrix(&tmpTranspositionMatrix);
 	*B = tmp;
 
 }
 
 void multiplyMatrixToFirst(double *** A, double ***B) {
-	int i, j, k;
+
 	double **tmp;
-
 	mallocMatrix(&tmp);
+	setZeros(&tmp);
 
-	for(i=0; i<M; i++)
-		for(j=0; j<N; j++)
-			for(k=0; k<N; k++) {
-				tmp[i][j] += (*A)[i][k] * (*B)[k][j];
-			}
+	multiplyMatrix(A, B, &tmp);
 
 	freeMatrix(A);
 	*A = tmp;
-
 }

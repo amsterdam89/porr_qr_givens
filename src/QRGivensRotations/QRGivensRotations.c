@@ -24,15 +24,17 @@ void QRGivensRotations(double ***A) {
 
 
 	// Algorytm qr Givens rotations
-	for(j=0; j<N; j++) //kolumny
-		for(i=j+1; i<M; i++) { //wiersze
-		//for(j=M-1; j>i; j--) { //wiersze
+	for(j=0; j<SIZE; j++) //kolumny
+		for(i=SIZE - 1; i > j; i--) { //wiersze
 			setEye(&G);
-			givensRotation2(R[i-1][j], R[i][j], &c, &s);
+			printMatrix(&G, "G to eye");
+			givensRotation(R[i-1][j], R[i][j], &c, &s);
 			//givensRotation2(R[j-1][i], R[j][i], &c, &s);
 
 			setMatrixG(&G, i, j, c, s);
-			printMatrix(&G, "G");
+			printMatrix(&G, "G set by c s");
+
+			// mozna zrownoleglic dwie instrukcje ponizej
 			multiplyMatrixToSecondWithTransposition(&G, &R);
 			// R = G'*R;
 			multiplyMatrixToFirst(&Q, &G);
@@ -41,8 +43,6 @@ void QRGivensRotations(double ***A) {
 			printMatrix(&R, "R");
 
 		}
-
-
 
 	printMatrix(&Q," Q ");
 	printMatrix(&R," R ");
@@ -55,10 +55,11 @@ void QRGivensRotations(double ***A) {
 
 void setMatrixG(double ***G, int i, int j, double c, double s) {
 
-	(*G)[i-1][j] = c;
-	(*G)[i][j] = -s;
-	(*G)[i-1][j+1] = s;
-	(*G)[i][j+1] = c;
+	// mozna zrownoleglic cztery ponizsze instrukcje
+	(*G)[i-1][i-1] = c;
+	(*G)[i][i-1] = s;
+	(*G)[i-1][i] = -s;
+	(*G)[i][i] = c;
 
 }
 
@@ -67,28 +68,24 @@ void givensRotation(double a, double b, double *c, double *s) {
 
 	double r;
 
-	  if(b == 0) {
-		    *c = 1.0;
-		    *s = 0.0;
-	  }
-	  else {
-		    if(abs(b) > abs(a)) {
-		      r = a / b;
-		      *s = 1 / sqrt(1 + r*r);
-		      *c = *s*r;
-		    }
-		    else {
-		    	r = b / a;
-		    	*c = 1 / sqrt(1 + r*r);
-		    	*s = *c*r;
-		    }
-	  }
+	if(abs(b) > abs(a)) {
+	  r = a / b;
+	  *s = 1.0 / sqrt(1.0 + r*r);
+	  *c = (*s)*r;
+	}
+	else {
+		r = b / a;
+		*c = 1.0 / sqrt(1.0 + r*r);
+		*s = (*c)*r;
+	}
 }
 
 void givensRotation2(double a, double b, double *c, double *s) {
 
+	//mozna by bylo zrownoleglic lecz nie zalecane numerycznie jest takie liczenie (przekręcenie się licznika)
 	double r;
     r = sqrt(a*a + b*b);
+    //mozna zrownoleglic dwie ponizsze instrukcje
     *c = a/r;
     *s = b/r;
 }

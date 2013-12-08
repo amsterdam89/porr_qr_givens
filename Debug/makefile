@@ -8,6 +8,8 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include src/openMp/QRGivensRotations/subdir.mk
+-include src/openMp/MatrixOperation/subdir.mk
 -include src/QRGivensRotations/subdir.mk
 -include src/MatrixOperation/subdir.mk
 -include src/FileReader/subdir.mk
@@ -32,7 +34,7 @@ all: porr
 porr: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc  -o "porr" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -fopenmp -o "porr" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

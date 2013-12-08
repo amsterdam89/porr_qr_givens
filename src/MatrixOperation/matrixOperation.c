@@ -98,7 +98,7 @@ void multiplyMatrix(double *** A, double ***B, double ***tmp) {
 }
 
 void multiplyMatrixToSecondWithTransposition(double *** A, double ***B) {
-
+	// R = G'*R;
 	double **tmp, **tmpTranspositionMatrix;
 
 	mallocMatrix(&tmp);
@@ -106,9 +106,8 @@ void multiplyMatrixToSecondWithTransposition(double *** A, double ***B) {
 	setZeros(&tmp);
 
 	copyArray(&tmpTranspositionMatrix, A);
-	printMatrix(&tmpTranspositionMatrix, "macierz przede transpozycja");
 	transposition(&tmpTranspositionMatrix);
-	printMatrix(&tmpTranspositionMatrix, "macierz po transpozycja");
+
 
 	multiplyMatrix(&tmpTranspositionMatrix, B, &tmp);
 
@@ -119,7 +118,7 @@ void multiplyMatrixToSecondWithTransposition(double *** A, double ***B) {
 }
 
 void multiplyMatrixToFirst(double *** A, double ***B) {
-
+	// Q = Q*G;
 	double **tmp;
 	mallocMatrix(&tmp);
 	setZeros(&tmp);

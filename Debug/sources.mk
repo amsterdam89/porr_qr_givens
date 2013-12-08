@@ -14,6 +14,8 @@ EXECUTABLES :=
 # Every subdirectory with source files must be described here
 SUBDIRS := \
 src \
+src/openMp/QRGivensRotations \
+src/openMp/MatrixOperation \
 src/QRGivensRotations \
 src/MatrixOperation \
 src/FileReader \

@@ -18,34 +18,29 @@ void QRGivensRotations(double ***A) {
 	mallocMatrix(&G);
 
 	copyArray(&R, A);
-	printMatrix(&R, "R");
 	setEye(&Q);
-	printMatrix(&Q, "Q");
 
 
 	// Algorytm qr Givens rotations
 	for(j=0; j<SIZE; j++) //kolumny
 		for(i=SIZE - 1; i > j; i--) { //wiersze
+
+			// #mozna zrownoleglic dwie instrukcje
 			setEye(&G);
-			printMatrix(&G, "G to eye");
 			givensRotation(R[i-1][j], R[i][j], &c, &s);
-			//givensRotation2(R[j-1][i], R[j][i], &c, &s);
 
 			setMatrixG(&G, i, j, c, s);
-			printMatrix(&G, "G set by c s");
 
-			// mozna zrownoleglic dwie instrukcje ponizej
+			// #mozna zrownoleglic dwie instrukcje ponizej
 			multiplyMatrixToSecondWithTransposition(&G, &R);
-			// R = G'*R;
 			multiplyMatrixToFirst(&Q, &G);
-			// Q = Q*G;
-			printMatrix(&Q, "Q");
-			printMatrix(&R, "R");
 
 		}
 
-	printMatrix(&Q," Q ");
-	printMatrix(&R," R ");
+	//printMatrix(&Q," Q ROZWIAZANIE");
+	//printMatrix(&R," R ROZWIAZANIE");
+
+	// #mozna zrownoleglic 3 instrukcje
 	freeMatrix(&Q);
 	freeMatrix(&R);
 	freeMatrix(&G);

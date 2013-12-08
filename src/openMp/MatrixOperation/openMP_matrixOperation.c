@@ -93,24 +93,30 @@ void openMP_multiplyMatrix(double *** A, double ***B, double ***tmp) {
 	//mozna zrownoleglic fora
 	//  reduction(+:tmp)
 
-	int i, j, k;
+	int i;//, j, k;
 
-//#pragma omp parallel for private(i,j,k) shared(A,B,tmp) schedule(dynamic) num_threads(1) //reduction(+: sum )
+
+
+
+#pragma omp parallel num_threads(8)  private(i) //shared(A, B,tmp)
+	{
+#pragma omp for schedule(dynamic, SIZE/8)
 	for (i=0; i < SIZE; i++) {
 
 		 double*  Arow = (*A)[i];
 		//double*  Crow = (*tmp)[i];
+		 int j;
 
-//#pragma omp parallel for private(j,k) shared(B) schedule(auto) num_threads(4)
-
-
-#pragma omp for private(j,k) schedule(auto) nowait //reduction(+:sum)
+//1		 #pragma omp parallel num_threads(8) shared(tmp)
+//1		 {
+//1 #pragma omp for private(j) schedule(auto) nowait //reduction(+:sum)
 		for (j=0; j < SIZE; j++) {
 
 
 
 			//double* Bcol = B;
 			double sum = 0.0;
+			int k;
 			for(k=0;k < SIZE ;k++) {
 				sum += Arow[k] * (*B)[k][j]; //C(i,j)=sum(over k) A(i,k)*B(k,j)
 			}
@@ -118,6 +124,8 @@ void openMP_multiplyMatrix(double *** A, double ***B, double ***tmp) {
 	    //Crow[j] = sum;
 	  }
 	}
+//1	}
+}
 
 
 /*

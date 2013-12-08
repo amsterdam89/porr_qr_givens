@@ -37,8 +37,8 @@ void QRGivensRotations(double ***A) {
 
 		}
 
-	//printMatrix(&Q," Q ROZWIAZANIE");
-	//printMatrix(&R," R ROZWIAZANIE");
+//	printMatrix(&Q," Q ROZWIAZANIE");
+//	printMatrix(&R," R ROZWIAZANIE");
 
 	// #mozna zrownoleglic 3 instrukcje
 	freeMatrix(&Q);

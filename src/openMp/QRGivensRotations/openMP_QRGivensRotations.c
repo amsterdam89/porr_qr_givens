@@ -14,12 +14,39 @@ void openMP_QRGivensRotations(double ***A) {
 	int i, j;
 	double c, s;
 
+#pragma omp parallel num_threads(3)
+{
+	#pragma omp sections nowait
+	{
+#pragma omp section
+			{
 	openMP_mallocMatrix(&Q);
+			}
+#pragma omp section
+			{
 	openMP_mallocMatrix(&R);
+			}
+#pragma omp section
+			{
 	openMP_mallocMatrix(&G);
+			}
+	}
+}
 
+#pragma omp parallel num_threads(2)
+{
+	#pragma omp sections nowait
+	{
+#pragma omp section
+			{
 	openMP_copyArray(&R, A);
+			}
+#pragma omp section
+			{
 	openMP_setEye(&Q);
+			}
+	}
+}
 
 
 	// Algorytm qr Givens rotations
@@ -27,8 +54,14 @@ void openMP_QRGivensRotations(double ***A) {
 		for(i=SIZE - 1; i > j; i--) { //wiersze
 
 			// #mozna zrownoleglic dwie instrukcje
+#pragma omp parallel num_threads(2)
+{
+	#pragma omp sections nowait
+	{
 			openMP_setEye(&G);
 			openMP_givensRotation(R[i-1][j], R[i][j], &c, &s);
+	}
+}
 
 
 			openMP_setMatrixG(&G, i, j, c, s);
@@ -41,9 +74,14 @@ void openMP_QRGivensRotations(double ***A) {
 {
 	#pragma omp sections
 		{
+#pragma omp section
+			{
 			openMP_multiplyMatrixToSecondWithTransposition(&G, &R);
+			}
+#pragma omp section
+			{
 			openMP_multiplyMatrixToFirst(&Q, &G);
-
+			}
 		}
 }
 
@@ -53,51 +91,32 @@ void openMP_QRGivensRotations(double ***A) {
 			//printf("------END---LOOP-----\n");
 		}
 
-//	openMP_printMatrix(&Q," Q ROZWIAZANIE  ");
-//	openMP_printMatrix(&R," R ROZWIAZANIE  ");
+	openMP_printMatrix(&Q," Q ROZWIAZANIE  ");
+	openMP_printMatrix(&R," R ROZWIAZANIE  ");
 
 	// #mozna zrownoleglic 3 instrukcje
-	/*
+
 	#pragma omp parallel num_threads(3)
 	{
 		#pragma omp sections
-		{*/
+		{
 			openMP_freeMatrix(&Q);
 			openMP_freeMatrix(&R);
 			openMP_freeMatrix(&G);
-		/*}
-	}*/
+		}
+	}
 
 	return;
 }
 
 void openMP_setMatrixG(double ***G, int i, int j, double c, double s) {
 
-	// mozna zrownoleglic cztery ponizsze instrukcje
-	//pragma omp sections sections shared(G, i, j, s, c)
-	//pragma omp parallel shared(G, i, j) private( s, c)
-	//pragma omp parallel num_threads(8) default(shared) private(c,s)
-	/*
-	#pragma omp section
-	{
-		id = omp_get_thread_num();
-		printf("ustawianie G, nr id = %i\n", id);
-		}
+	// mozna by było zrownoleglic cztery ponizsze instrukcje lecz nie ma to sensu
 
-	 */
-
-/*
-#pragma omp parallel num_threads(4)
-{
-	#pragma omp sections
-	{*/
 			(*G)[i-1][i-1] = c;
 			(*G)[i][i] = c;
 			(*G)[i][i-1] = s;
 			(*G)[i-1][i] = -s;
-/*
-	}
-}*/
 
 }
 

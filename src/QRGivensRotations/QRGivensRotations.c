@@ -63,16 +63,26 @@ void givensRotation(double a, double b, double *c, double *s) {
 
 	double r;
 
-	if(abs(b) > abs(a)) {
-	  r = a / b;
-	  *s = 1.0 / sqrt(1.0 + r*r);
-	  *c = (*s)*r;
-	}
-	else {
-		r = b / a;
-		*c = 1.0 / sqrt(1.0 + r*r);
-		*s = (*c)*r;
-	}
+	if(b == 0.0 || a == 0.0)
+		if(b == 0.0) {
+			*c = 1.0;
+			*s = 0.0;
+		}
+		else {
+			*c = 0.0;
+			*s = 1.0;
+		}
+	else
+		if(abs(b) > abs(a)) {
+		  r = a / b;
+		  *s = 1.0 / sqrt(1.0 + r*r);
+		  *c = (*s)*r;
+		}
+		else {
+			r = b / a;
+			*c = 1.0 / sqrt(1.0 + r*r);
+			*s = (*c)*r;
+		}
 }
 
 void givensRotation2(double a, double b, double *c, double *s) {

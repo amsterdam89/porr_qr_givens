@@ -14,7 +14,7 @@
 
 extern int SIZE;
 
-bool loadArguments(int argc, char *argv[], char *path, char *name);
+bool loadArguments(int argc, char *argv[], char **path, char **name);
 bool loadData(char *path, double ***A);
 void setMatrix(FILE *f, double ***A);
 

@@ -10,6 +10,8 @@ void openMP_mallocMatrix(double ***A) {
 	int i;
 
 	*A =  malloc(SIZE * sizeof *(*A));
+
+	// nie warto zrownoleglac
 	for (i = 0; i < SIZE; i++)
 		(*A)[i] = malloc(SIZE * sizeof *(*A)[i]);
 }
@@ -17,8 +19,10 @@ void openMP_mallocMatrix(double ***A) {
 void openMP_freeMatrix(double ***A) {
 	int i;
 
+	// nie warto zrownoleglac
     for (i = 0; i < SIZE; i++)
     	free((*A)[i]);
+
     free(*A);
 }
 
@@ -39,25 +43,32 @@ void openMP_copyArray(double *** R, double ***A) {
 	//mozna zrownoleglic fora
 	int i, j;
 
-//#pragma omp parallel for shared(A, R, SIZE) private(i,j)  schedule(dynamic)
+#pragma omp parallel num_threads(NUM_PROCS)  private(i,j) shared(A, R)
+	{
+#pragma omp for schedule(dynamic, SIZE/NUM_PROCS)
 	for(i=0; i<SIZE; i++)
 		for(j=0; j<SIZE; j++) {
 			(*R)[i][j] = (*A)[i][j];
 
 		}
+	}
 }
 
 void openMP_setEye(double ***A) {
 	//mozna zrownoleglic fora
 	int i, j;
 
-//#pragma omp parallel for shared(A, SIZE) private(i,j) schedule(dynamic)
+
+#pragma omp parallel num_threads(NUM_PROCS)  private(i,j) shared(A)
+	{
+#pragma omp for schedule(dynamic, SIZE/NUM_PROCS)
 	for(i=0; i<SIZE; i++)
 		for(j=0; j<SIZE; j++)
 			if(i == j)
 				(*A)[i][j] = 1.0;
 			else
 				(*A)[i][j] = 0.0;
+	}
 }
 
 void openMP_setZeros(double ***A) {
@@ -65,10 +76,13 @@ void openMP_setZeros(double ***A) {
 	//mozna zrownoleglic fora
 	int i, j;
 
-//#pragma omp parallel for shared(A, SIZE) private(i,j) schedule(dynamic)
+#pragma omp parallel num_threads(NUM_PROCS)  private(i,j) shared(A)
+	{
+#pragma omp for schedule(dynamic, SIZE/NUM_PROCS)
 	for(i=0; i<SIZE; i++)
 		for(j=0; j<SIZE; j++)
 				(*A)[i][j] = 0.0;
+	}
 }
 
 void openMP_transposition(double ***A) {
@@ -78,11 +92,14 @@ void openMP_transposition(double ***A) {
 
 	openMP_mallocMatrix(&tmp);
 
-//#pragma omp parallel for shared(tmp, A, SIZE) private(i,j) schedule(dynamic)
+#pragma omp parallel num_threads(NUM_PROCS)  private(i,j) shared(A,tmp)
+	{
+#pragma omp for schedule(dynamic, SIZE/NUM_PROCS)
 	for(i=0; i<SIZE; i++)
 		for(j=0; j<SIZE; j++) {
 			tmp[j][i] = (*A)[i][j];
 		}
+	}
 
 	openMP_freeMatrix(A);
 	*A = tmp;
@@ -90,53 +107,29 @@ void openMP_transposition(double ***A) {
 }
 
 void openMP_multiplyMatrix(double *** A, double ***B, double ***tmp) {
-	//mozna zrownoleglic fora
-	//  reduction(+:tmp)
 
-	int i;//, j, k;
+	int i;
 
-
-
-
-#pragma omp parallel num_threads(8)  private(i) //shared(A, B,tmp)
+#pragma omp parallel num_threads(NUM_PROCS)  private(i)
 	{
-#pragma omp for schedule(dynamic, SIZE/8)
+#pragma omp for schedule(dynamic, SIZE/NUM_PROCS)
 	for (i=0; i < SIZE; i++) {
 
 		 double*  Arow = (*A)[i];
-		//double*  Crow = (*tmp)[i];
 		 int j;
 
-//1		 #pragma omp parallel num_threads(8) shared(tmp)
-//1		 {
-//1 #pragma omp for private(j) schedule(auto) nowait //reduction(+:sum)
 		for (j=0; j < SIZE; j++) {
 
-
-
-			//double* Bcol = B;
 			double sum = 0.0;
 			int k;
-			for(k=0;k < SIZE ;k++) {
-				sum += Arow[k] * (*B)[k][j]; //C(i,j)=sum(over k) A(i,k)*B(k,j)
-			}
+
+			for(k=0;k < SIZE ;k++)
+				sum += Arow[k] * (*B)[k][j];
+
 			(*tmp)[i][j] = sum;
-	    //Crow[j] = sum;
 	  }
 	}
-//1	}
 }
-
-
-/*
-#pragma omp parallel for shared(tmp) private(i,j,k) num_threads(2) schedule(auto) //reduction(+: tab )
-	for(i=0; i<SIZE; i++)
-		for(j=0; j<SIZE; j++)
-			for(k=0; k<SIZE; k++)
-				//tab[i][j] = tab[i][j] + ( (*A)[i][k] * (*B)[k][j] );
-				(*tmp)[i][j] += ( (*A)[i][k] * (*B)[k][j] );
-*/
-
 
 
 }
@@ -145,19 +138,20 @@ void openMP_multiplyMatrixToSecondWithTransposition(double *** A, double ***B) {
 	// R = G'*R;
 	double **tmp, **tmpTranspositionMatrix;
 
+	// zrownoleglanie nie przynosi korzysci
 	openMP_mallocMatrix(&tmp);
 	openMP_mallocMatrix(&tmpTranspositionMatrix);
+
 	openMP_setZeros(&tmp);
-
 	openMP_copyArray(&tmpTranspositionMatrix, A);
-	//openMP_printMatrix(&tmpTranspositionMatrix, "macierz przede transpozycja");
-	openMP_transposition(&tmpTranspositionMatrix);
-	//openMP_printMatrix(&tmpTranspositionMatrix, "macierz po transpozycja");
 
+	openMP_transposition(&tmpTranspositionMatrix);
 	openMP_multiplyMatrix(&tmpTranspositionMatrix, B, &tmp);
 
 	openMP_freeMatrix(B);
 	openMP_freeMatrix(&tmpTranspositionMatrix);
+
+
 	*B = tmp;
 
 }

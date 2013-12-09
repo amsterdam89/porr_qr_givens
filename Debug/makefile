@@ -12,6 +12,7 @@ RM := rm -rf
 -include src/openMp/MatrixOperation/subdir.mk
 -include src/QRGivensRotations/subdir.mk
 -include src/MatrixOperation/subdir.mk
+-include src/FileSave/subdir.mk
 -include src/FileReader/subdir.mk
 -include src/subdir.mk
 -include subdir.mk

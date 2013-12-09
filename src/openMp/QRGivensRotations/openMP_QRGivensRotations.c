@@ -16,7 +16,7 @@ void openMP_QRGivensRotations(double ***A) {
 
 #pragma omp parallel num_threads(3)
 {
-	#pragma omp sections nowait
+#pragma omp sections nowait
 	{
 #pragma omp section
 			{
@@ -35,7 +35,7 @@ void openMP_QRGivensRotations(double ***A) {
 
 #pragma omp parallel num_threads(2)
 {
-	#pragma omp sections nowait
+#pragma omp sections nowait
 	{
 #pragma omp section
 			{
@@ -53,13 +53,19 @@ void openMP_QRGivensRotations(double ***A) {
 	for(j=0; j<SIZE; j++) //kolumny
 		for(i=SIZE - 1; i > j; i--) { //wiersze
 
-			// #mozna zrownoleglic dwie instrukcje
+
 #pragma omp parallel num_threads(2)
 {
-	#pragma omp sections nowait
+#pragma omp sections nowait
 	{
+#pragma omp section
+			{
 			openMP_setEye(&G);
+			}
+#pragma omp section
+			{
 			openMP_givensRotation(R[i-1][j], R[i][j], &c, &s);
+			}
 	}
 }
 
@@ -67,12 +73,10 @@ void openMP_QRGivensRotations(double ***A) {
 			openMP_setMatrixG(&G, i, j, c, s);
 
 
-			// #mozna zrownoleglic dwie instrukcje ponizej
-			//#pragma omp sections default(shared) private(c,s)
 
 #pragma omp parallel num_threads(2)
 {
-	#pragma omp sections
+#pragma omp sections nowait
 		{
 #pragma omp section
 			{
@@ -85,24 +89,29 @@ void openMP_QRGivensRotations(double ***A) {
 		}
 }
 
+		}//END FOR
 
-			//printMatrix(&Q, "Q");
-			//printMatrix(&R, "R");
-			//printf("------END---LOOP-----\n");
-		}
-
-	openMP_printMatrix(&Q," Q ROZWIAZANIE  ");
-	openMP_printMatrix(&R," R ROZWIAZANIE  ");
+//	openMP_printMatrix(&Q," Q ROZWIAZANIE  ");
+//	openMP_printMatrix(&R," R ROZWIAZANIE  ");
 
 	// #mozna zrownoleglic 3 instrukcje
 
-	#pragma omp parallel num_threads(3)
-	{
-		#pragma omp sections
+#pragma omp parallel num_threads(3)
+{
+#pragma omp sections nowait
 		{
+#pragma omp section
+			{
 			openMP_freeMatrix(&Q);
+			}
+#pragma omp section
+			{
 			openMP_freeMatrix(&R);
+			}
+#pragma omp section
+			{
 			openMP_freeMatrix(&G);
+			}
 		}
 	}
 
@@ -111,7 +120,7 @@ void openMP_QRGivensRotations(double ***A) {
 
 void openMP_setMatrixG(double ***G, int i, int j, double c, double s) {
 
-	// mozna by było zrownoleglic cztery ponizsze instrukcje lecz nie ma to sensu
+	// nie warto zrownoleglac
 
 			(*G)[i-1][i-1] = c;
 			(*G)[i][i] = c;
@@ -125,16 +134,26 @@ void openMP_givensRotation(double a, double b, double *c, double *s) {
 
 	double r;
 
-	if(abs(b) > abs(a)) {
-	  r = a / b;
-	  *s = 1.0 / sqrt(1.0 + r*r);
-	  *c = (*s)*r;
-	}
-	else {
-		r = b / a;
-		*c = 1.0 / sqrt(1.0 + r*r);
-		*s = (*c)*r;
-	}
+	if(b == 0.0 || a == 0.0)
+		if(b == 0.0) {
+			*c = 1.0;
+			*s = 0.0;
+		}
+		else {
+			*c = 0.0;
+			*s = 1.0;
+		}
+	else
+		if(abs(b) > abs(a)) {
+		  r = a / b;
+		  *s = 1.0 / sqrt(1.0 + r*r);
+		  *c = (*s)*r;
+		}
+		else {
+			r = b / a;
+			*c = 1.0 / sqrt(1.0 + r*r);
+			*s = (*c)*r;
+		}
 }
 
 void openMP_givensRotation2(double a, double b, double *c, double *s) {

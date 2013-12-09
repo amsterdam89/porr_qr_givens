@@ -12,6 +12,7 @@
 #include <stdlib.h>
 
 extern int SIZE;
+extern int NUM_PROCS;
 
 void openMP_mallocMatrix(double ***A);
 void openMP_freeMatrix(double ***A);

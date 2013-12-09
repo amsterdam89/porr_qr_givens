@@ -7,7 +7,7 @@
 #include "FileReader.h"
 
 
-bool loadArguments(int argc, char *argv[], char *path, char *name){
+bool loadArguments(int argc, char *argv[], char **path, char **name){
 
 	if(argc == 1) {
 		printf("wywolanie algorytmu z niepoprawnymi flagami.\n");
@@ -16,13 +16,13 @@ bool loadArguments(int argc, char *argv[], char *path, char *name){
 	}
 	else if(argc >=2) {
 		if(argc == 2) {
-			path = argv[1];
-			name = "wynik.dat";
+			*path = argv[1];
+			*name = "wynik.dat";
 			return true;
 		}
 		else {
-			path = argv[1];
-			name = argv[2];
+			*path = argv[1];
+			*name = argv[2];
 			return true;
 		}
 	}
@@ -67,7 +67,7 @@ void setMatrix(FILE *f, double ***A) {
 
 	for(i=0; i<SIZE; i++) //wiersze
 		for(j=0; j<SIZE; j++) //kolumny
-			fscanf(f, " %lf", &(*A)[i][j]);
+			fscanf(f, " %d", &(*A)[i][j]);
 
 
 }

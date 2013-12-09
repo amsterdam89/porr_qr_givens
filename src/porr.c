@@ -9,27 +9,44 @@
  */
 
 #include <stdio.h>
-#include <time.h>
-#ifdef __unix__
-#include <sys/time.h>
-#endif
 #include "FileReader/FileReader.h"
+#include "FileSave/FileSave.h"
 #include "QRGivensRotations/QRGivensRotations.h"
 #include "openMp/QRGivensRotations/openMP_QRGivensRotations.h"
-#include "Cilk/QRGivensRotations/Cilk_QRGivensRotations.h"
-//#include "MatrixOperation/matrixOperation.h"
+#include <time.h>
 
+
+
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+#include <time.h>
+typedef clock_t TIME;
+
+TIME get_time(void) {
+	return clock();
+}
+
+#else
+#include <sys/time.h>
+typedef time_t TIME;
+
+
+TIME get_time(void)
+{
+	struct timeval myTime;
+	gettimeofday(&myTime, NULL);
+	return myTime.tv_sec*1000000 + myTime.tv_usec;
+}
+
+#endif
 
 
 extern void QRGivensRotations(double ***A);
 extern void openMP_QRGivensRotations(double ***A);
-//#ifdef __unix__
-//extern time_t get_time(void);
-//#else 
-extern clock_t get_time(void); 
-//#endif
 
 int SIZE; //liczba wierszy i kolumn
+int NUM_PROCS;
+int NUM_PROCS_2;
+int NUM_PROCS_3;
 
 
 int main(int argc, char *argv[]) {
@@ -37,86 +54,61 @@ int main(int argc, char *argv[]) {
 	double **A;
     char *path = NULL;
     char *name = NULL;
+    TIME timeQRG, timeQRG_openMP;
     clock_t clockQRG, clockQRG_openMP;
-	/*#ifdef __unix__
-    time_t timeQRG, timeQRG_openMP;
-#else*/
-	clock_t timeQRG, timeQRG_openMP;
-//#endif
     double unitsInMilliSecond = 1000;
 
 
+	argc = 3; //TODO do usuniecia
 
-	argc = 2; //TODO do usuniecia
+	if(loadArguments(argc, argv, &path, &name) ) {
 
-	if(loadArguments(argc, argv, path, name) ) {
-
-		path = "porr_file.txt"; //TODO do usuniecia
+		NUM_PROCS = 8; //TODO rm
+		path = "/home/amsterdam/workspace/porr_file.txt"; //TODO do usuniecia
 
 		if(loadData(path, &A)) {
 
+			if(NUM_PROCS >= 3) {
+				NUM_PROCS_2 = 2;
+				NUM_PROCS_3 = 3;
+			}
+			else if (NUM_PROCS >= 2) {
+				NUM_PROCS_2 = 2;
+				NUM_PROCS_3 = 2;
+			}
+			else {
+				NUM_PROCS_2 = 1;
+				NUM_PROCS_3 = 1;
+				NUM_PROCS = 1;
+			}
 
-			//TODO jeszcze wymnożyć i zwrócić Q i R oraz dodać jakieś czasy
-
-
-		    clockQRG = clock();
+			clockQRG = clock();
 		    timeQRG = get_time();
 		    QRGivensRotations(&A);
 		    clockQRG = clock() - clockQRG;
 		    timeQRG = get_time() - timeQRG;
-		    printf("Elapsed clock for QR Givens Rotations: %.16f seconds\n", (double) clockQRG / CLOCKS_PER_SEC);
+		    printf("Elapsed clock for QR Givens Rotations: %.16f seconds\n", (double) clockQRG / CLOCKS_PER_SEC); //TODO rm
 		    printf("Elapsed time for QR Givens Rotations: %.16f \n", (double) timeQRG / unitsInMilliSecond);
 
-		    clockQRG_openMP = clock();
+		    clockQRG_openMP = clock(); //TODO rm
 		    timeQRG_openMP = get_time();
-			//openMP_QRGivensRotations(&A);
-			clockQRG_openMP = clock() - clockQRG_openMP;
+			openMP_QRGivensRotations(&A);
+			clockQRG_openMP = clock() - clockQRG_openMP; //TODO rm
 			timeQRG_openMP = get_time() - timeQRG_openMP;
-			printf("Elapsed clock for QR Givens Rotations in openMp: %.16f seconds\n", (double) clockQRG_openMP / CLOCKS_PER_SEC);
+			printf("Elapsed clock for QR Givens Rotations in openMp: %.16f seconds\n", (double) clockQRG_openMP / CLOCKS_PER_SEC); //TODO rm
 			printf("Elapsed time for QR Givens Rotations in openMp: %.16f \n", (double) timeQRG_openMP / unitsInMilliSecond);
-
-		    clockQRG_openMP = clock();
-		    timeQRG_openMP = get_time();
-			Cilk_QRGivensRotations(&A);
-			clockQRG_openMP = clock() - clockQRG_openMP;
-			timeQRG_openMP = get_time() - timeQRG_openMP;
-			printf("Elapsed clock for QR Givens Rotations in cilk: %.16f seconds\n", (double) clockQRG_openMP / CLOCKS_PER_SEC);
-			printf("Elapsed time for QR Givens Rotations in cilk: %.16f \n", (double) timeQRG_openMP / unitsInMilliSecond);
-
-
-
-
 
 
 			freeMatrix(&A);
-			getchar();
-			return EXIT_SUCCESS;
+
+			if(saveData(name, (double) timeQRG / unitsInMilliSecond, (double) timeQRG_openMP / unitsInMilliSecond))
+				return EXIT_SUCCESS;
+			else
+				return EXIT_FAILURE;
+
 		}
 
 	}
 
 	return EXIT_FAILURE;
 }
-
-//#ifdef __unix__
-//time_t get_time(void)
-//{ 
-//	
-//	struct timeval time;
-//	gettimeofday(&time, NULL);
-//	return time.tv_sec*1000000 + time.tv_usec;
-//	
-//}
-//#else
-clock_t get_time(void)
-{ 
-	
-	
-	return clock();
-	
-}
-//#endif
-
-
-
-

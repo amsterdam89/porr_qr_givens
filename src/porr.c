@@ -10,17 +10,24 @@
 
 #include <stdio.h>
 #include <time.h>
+#ifdef __unix__
 #include <sys/time.h>
+#endif
 #include "FileReader/FileReader.h"
 #include "QRGivensRotations/QRGivensRotations.h"
 #include "openMp/QRGivensRotations/openMP_QRGivensRotations.h"
+#include "Cilk/QRGivensRotations/Cilk_QRGivensRotations.h"
 //#include "MatrixOperation/matrixOperation.h"
 
 
 
 extern void QRGivensRotations(double ***A);
 extern void openMP_QRGivensRotations(double ***A);
-extern time_t get_time(void);
+//#ifdef __unix__
+//extern time_t get_time(void);
+//#else 
+extern clock_t get_time(void); 
+//#endif
 
 int SIZE; //liczba wierszy i kolumn
 
@@ -31,7 +38,11 @@ int main(int argc, char *argv[]) {
     char *path = NULL;
     char *name = NULL;
     clock_t clockQRG, clockQRG_openMP;
+	/*#ifdef __unix__
     time_t timeQRG, timeQRG_openMP;
+#else*/
+	clock_t timeQRG, timeQRG_openMP;
+//#endif
     double unitsInMilliSecond = 1000;
 
 
@@ -40,7 +51,7 @@ int main(int argc, char *argv[]) {
 
 	if(loadArguments(argc, argv, path, name) ) {
 
-		path = "/home/amsterdam/workspace/porr_file.txt"; //TODO do usuniecia
+		path = "porr_file.txt"; //TODO do usuniecia
 
 		if(loadData(path, &A)) {
 
@@ -58,11 +69,19 @@ int main(int argc, char *argv[]) {
 
 		    clockQRG_openMP = clock();
 		    timeQRG_openMP = get_time();
-			openMP_QRGivensRotations(&A);
+			//openMP_QRGivensRotations(&A);
 			clockQRG_openMP = clock() - clockQRG_openMP;
 			timeQRG_openMP = get_time() - timeQRG_openMP;
 			printf("Elapsed clock for QR Givens Rotations in openMp: %.16f seconds\n", (double) clockQRG_openMP / CLOCKS_PER_SEC);
-			printf("Elapsed time for QR Givens Rotations: %.16f \n", (double) timeQRG_openMP / unitsInMilliSecond);
+			printf("Elapsed time for QR Givens Rotations in openMp: %.16f \n", (double) timeQRG_openMP / unitsInMilliSecond);
+
+		    clockQRG_openMP = clock();
+		    timeQRG_openMP = get_time();
+			Cilk_QRGivensRotations(&A);
+			clockQRG_openMP = clock() - clockQRG_openMP;
+			timeQRG_openMP = get_time() - timeQRG_openMP;
+			printf("Elapsed clock for QR Givens Rotations in cilk: %.16f seconds\n", (double) clockQRG_openMP / CLOCKS_PER_SEC);
+			printf("Elapsed time for QR Givens Rotations in cilk: %.16f \n", (double) timeQRG_openMP / unitsInMilliSecond);
 
 
 
@@ -70,6 +89,7 @@ int main(int argc, char *argv[]) {
 
 
 			freeMatrix(&A);
+			getchar();
 			return EXIT_SUCCESS;
 		}
 
@@ -78,12 +98,25 @@ int main(int argc, char *argv[]) {
 	return EXIT_FAILURE;
 }
 
-time_t get_time(void)
-{
-	struct timeval time;
-	gettimeofday(&time, NULL);
-	return time.tv_sec*1000000 + time.tv_usec;
+//#ifdef __unix__
+//time_t get_time(void)
+//{ 
+//	
+//	struct timeval time;
+//	gettimeofday(&time, NULL);
+//	return time.tv_sec*1000000 + time.tv_usec;
+//	
+//}
+//#else
+clock_t get_time(void)
+{ 
+	
+	
+	return clock();
+	
 }
+//#endif
+
 
 
 

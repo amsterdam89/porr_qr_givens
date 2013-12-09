@@ -11,9 +11,8 @@
 #include <stdio.h>
 #include "FileReader/FileReader.h"
 #include "FileSave/FileSave.h"
-#include "QRGivensRotations/QRGivensRotations.h" //TODO rm
-#include "openMp/QRGivensRotations/openMP_QRGivensRotations.h" //tODO rm
 #include "Eigenvalue/Eigenvalue.h"
+#include "openMp/Eigenvalue/openMP_Eigenvalue.h"
 #include <time.h>
 
 
@@ -42,6 +41,7 @@ TIME get_time(void)
 
 
 extern void getEignvalues(double ***A);
+extern void openMP_getEignvalues(double ***A);
 extern void setNumProcs();
 
 
@@ -50,7 +50,6 @@ int MAX_ITER = 250;
 double EPSILON = 0.00001;
 int NUM_PROCS;
 int NUM_PROCS_2;
-int NUM_PROCS_3;
 
 
 int main(int argc, char *argv[]) {
@@ -77,22 +76,23 @@ int main(int argc, char *argv[]) {
 			setNumProcs();
 
 
+		    clockQRG_openMP = clock(); //TODO rm
+		    timeQRG_openMP = get_time();
+		    openMP_getEignvalues(&A);
+			clockQRG_openMP = clock() - clockQRG_openMP; //TODO rm
+			timeQRG_openMP = get_time() - timeQRG_openMP;
+			printf("Elapsed clock for QR Givens Rotations in openMp: %.16f seconds\n", (double) clockQRG_openMP / CLOCKS_PER_SEC); //TODO rm
+			printf("Elapsed time for QR Givens Rotations in openMp: %.16f \n", (double) timeQRG_openMP / unitsInMilliSecond);
+
 			clockQRG = clock();
 		    timeQRG = get_time();
 		    getEignvalues(&A);
-		    //QRGivensRotations(&A);
 		    clockQRG = clock() - clockQRG;
 		    timeQRG = get_time() - timeQRG;
 		    printf("Elapsed clock for QR Givens Rotations: %.16f seconds\n", (double) clockQRG / CLOCKS_PER_SEC); //TODO rm
 		    printf("Elapsed time for QR Givens Rotations: %.16f \n", (double) timeQRG / unitsInMilliSecond);
 
-		    clockQRG_openMP = clock(); //TODO rm
-		    timeQRG_openMP = get_time();
-			//openMP_QRGivensRotations(&A);
-			clockQRG_openMP = clock() - clockQRG_openMP; //TODO rm
-			timeQRG_openMP = get_time() - timeQRG_openMP;
-			printf("Elapsed clock for QR Givens Rotations in openMp: %.16f seconds\n", (double) clockQRG_openMP / CLOCKS_PER_SEC); //TODO rm
-			printf("Elapsed time for QR Givens Rotations in openMp: %.16f \n", (double) timeQRG_openMP / unitsInMilliSecond);
+
 
 
 			freeMatrix(&A);
@@ -111,17 +111,10 @@ int main(int argc, char *argv[]) {
 
 void setNumProcs() {
 
-	if(NUM_PROCS >= 3) {
+	if(NUM_PROCS >= 2)
 		NUM_PROCS_2 = 2;
-		NUM_PROCS_3 = 3;
-	}
-	else if (NUM_PROCS >= 2) {
-		NUM_PROCS_2 = 2;
-		NUM_PROCS_3 = 2;
-	}
 	else {
 		NUM_PROCS_2 = 1;
-		NUM_PROCS_3 = 1;
 		NUM_PROCS = 1;
 	}
 

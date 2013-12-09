@@ -7,31 +7,15 @@
 
 #include "openMP_QRGivensRotations.h"
 
-void openMP_QRGivensRotations(double ***A) {
+void openMP_QRGivensRotations(double ***A, double ***Q, double ***R) {
 
 
-	double **Q, **R, **G;
+	double **G;
 	int i, j;
 	double c, s;
 
-#pragma omp parallel num_threads(NUM_PROCS_3)
-{
-#pragma omp sections nowait
-	{
-#pragma omp section
-			{
-	openMP_mallocMatrix(&Q);
-			}
-#pragma omp section
-			{
-	openMP_mallocMatrix(&R);
-			}
-#pragma omp section
-			{
 	openMP_mallocMatrix(&G);
-			}
-	}
-}
+
 
 #pragma omp parallel num_threads(NUM_PROCS_2)
 {
@@ -39,11 +23,11 @@ void openMP_QRGivensRotations(double ***A) {
 	{
 #pragma omp section
 			{
-	openMP_copyArray(&R, A);
+	openMP_copyArray(R, A);
 			}
 #pragma omp section
 			{
-	openMP_setEye(&Q);
+	openMP_setEye(Q);
 			}
 	}
 }
@@ -64,7 +48,7 @@ void openMP_QRGivensRotations(double ***A) {
 			}
 #pragma omp section
 			{
-			openMP_givensRotation(R[i-1][j], R[i][j], &c, &s);
+			openMP_givensRotation((*R)[i-1][j], (*R)[i][j], &c, &s);
 			}
 	}
 }
@@ -80,39 +64,20 @@ void openMP_QRGivensRotations(double ***A) {
 		{
 #pragma omp section
 			{
-			openMP_multiplyMatrixToSecondWithTransposition(&G, &R);
+			openMP_multiplyMatrixToSecondWithTransposition(&G, R);
 			}
 #pragma omp section
 			{
-			openMP_multiplyMatrixToFirst(&Q, &G);
+			openMP_multiplyMatrixToFirst(Q, &G);
 			}
 		}
 }
 
 		}//END FOR
 
-//	openMP_printMatrix(&Q," Q ROZWIAZANIE  ");
-//	openMP_printMatrix(&R," R ROZWIAZANIE  ");
 
+	openMP_freeMatrix(&G);
 
-#pragma omp parallel num_threads(NUM_PROCS_3)
-{
-#pragma omp sections nowait
-		{
-#pragma omp section
-			{
-			openMP_freeMatrix(&Q);
-			}
-#pragma omp section
-			{
-			openMP_freeMatrix(&R);
-			}
-#pragma omp section
-			{
-			openMP_freeMatrix(&G);
-			}
-		}
-	}
 
 	return;
 }

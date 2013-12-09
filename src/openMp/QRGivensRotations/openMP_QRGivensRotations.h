@@ -12,11 +12,10 @@
 #include <math.h>
 #include "../MatrixOperation/openMP_matrixOperation.h"
 
-#define DEBUG 1;
 extern int SIZE;
-extern int NUM_PROCS_2, NUM_PROCS_3;
+extern int NUM_PROCS_2;
 
-void openMP_qrGivensRotations(double ***A);
+void openMP_QRGivensRotations(double ***A, double ***Q, double ***R);
 void openMP_setMatrixG(double ***G, int i, int j, double c, double s);
 void openMP_givensRotation(double a, double b, double *c, double *s);
 void openMP_givensRotation2(double a, double b, double *c, double *s);

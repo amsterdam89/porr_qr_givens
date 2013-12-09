@@ -20,6 +20,7 @@ void printMatrixDiagonal(double ***A, char *s);
 
 void copyArray(double *** R, double ***A);
 void setEye(double ***A);
+void setZeros(double ***A);
 void transposition(double ***A);
 void multiplyMatrixToSecondWithTransposition(double *** A, double ***B);
 void multiplyMatrixToFirst(double *** A, double ***B);

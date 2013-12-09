@@ -13,6 +13,7 @@
 #include "../bool.h"
 
 extern int SIZE;
+extern int NUM_PROCS;
 
 bool loadArguments(int argc, char *argv[], char **path, char **name);
 bool loadData(char *path, double ***A);

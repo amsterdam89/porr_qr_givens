@@ -40,12 +40,13 @@ TIME get_time(void)
 #endif
 
 
-
 extern void QRGivensRotations(double ***A);
 extern void openMP_QRGivensRotations(double ***A);
 
 int SIZE; //liczba wierszy i kolumn
-int NUM_PROCS = 8;
+int NUM_PROCS;
+int NUM_PROCS_2;
+int NUM_PROCS_3;
 
 
 int main(int argc, char *argv[]) {
@@ -58,14 +59,28 @@ int main(int argc, char *argv[]) {
     double unitsInMilliSecond = 1000;
 
 
-
-	argc = 2; //TODO do usuniecia
+	argc = 3; //TODO do usuniecia
 
 	if(loadArguments(argc, argv, &path, &name) ) {
 
+		NUM_PROCS = 8; //TODO rm
 		path = "/home/amsterdam/workspace/porr_file.txt"; //TODO do usuniecia
 
 		if(loadData(path, &A)) {
+
+			if(NUM_PROCS >= 3) {
+				NUM_PROCS_2 = 2;
+				NUM_PROCS_3 = 3;
+			}
+			else if (NUM_PROCS >= 2) {
+				NUM_PROCS_2 = 2;
+				NUM_PROCS_3 = 2;
+			}
+			else {
+				NUM_PROCS_2 = 1;
+				NUM_PROCS_3 = 1;
+				NUM_PROCS = 1;
+			}
 
 			clockQRG = clock();
 		    timeQRG = get_time();
@@ -81,7 +96,7 @@ int main(int argc, char *argv[]) {
 			clockQRG_openMP = clock() - clockQRG_openMP; //TODO rm
 			timeQRG_openMP = get_time() - timeQRG_openMP;
 			printf("Elapsed clock for QR Givens Rotations in openMp: %.16f seconds\n", (double) clockQRG_openMP / CLOCKS_PER_SEC); //TODO rm
-			printf("Elapsed time for QR Givens Rotations: %.16f \n", (double) timeQRG_openMP / unitsInMilliSecond);
+			printf("Elapsed time for QR Givens Rotations in openMp: %.16f \n", (double) timeQRG_openMP / unitsInMilliSecond);
 
 
 			freeMatrix(&A);
@@ -97,8 +112,3 @@ int main(int argc, char *argv[]) {
 
 	return EXIT_FAILURE;
 }
-
-
-
-
-

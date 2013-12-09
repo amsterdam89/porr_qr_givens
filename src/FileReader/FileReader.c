@@ -9,20 +9,23 @@
 
 bool loadArguments(int argc, char *argv[], char **path, char **name){
 
-	if(argc == 1) {
+	if(argc <= 2) {
 		printf("wywolanie algorytmu z niepoprawnymi flagami.\n");
-		printf("przyklady wywolania:\n porr.exe data.dat\n porr.exe data.dat wyniki.dat\n");
+		printf("przyklady wywolania:\n porr.exe 8 data.dat\n porr.exe 8 data.dat wyniki.dat\n");
+		printf("pierwszy argument to: liczba rdzenie procesora\ndrugi argument to: plik z testowa macierza\ntrzeci argument( opcjonalny, w przypadku nie podania wyniki zostana zapisane do wyniki.dat) to: plik do zapisu wyników\n");
 		return false;
 	}
-	else if(argc >=2) {
-		if(argc == 2) {
-			*path = argv[1];
+	else if(argc >=3) {
+		if(argc == 3) {
+			NUM_PROCS = argv[1];
+			*path = argv[2];
 			*name = "wynik.dat";
 			return true;
 		}
 		else {
-			*path = argv[1];
-			*name = argv[2];
+			NUM_PROCS = argv[1];
+			*path = argv[2];
+			*name = argv[3];
 			return true;
 		}
 	}
@@ -59,6 +62,8 @@ bool loadData(char *path, double ***A) {
 	setMatrix(f,A);
     fclose(f);
 
+    printMatrix(A, " wczytanej z pliku\n");
+
     return true;
 }
 
@@ -67,7 +72,7 @@ void setMatrix(FILE *f, double ***A) {
 
 	for(i=0; i<SIZE; i++) //wiersze
 		for(j=0; j<SIZE; j++) //kolumny
-			fscanf(f, " %d", &(*A)[i][j]);
+			fscanf(f, " %lf", &(*A)[i][j]);
 
 
 }

@@ -14,6 +14,7 @@
 
 #define DEBUG 1;
 extern int SIZE;
+extern int NUM_PROCS_2, NUM_PROCS_3;
 
 void openMP_qrGivensRotations(double ***A);
 void openMP_setMatrixG(double ***G, int i, int j, double c, double s);

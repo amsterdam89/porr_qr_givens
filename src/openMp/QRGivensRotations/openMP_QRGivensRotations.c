@@ -14,7 +14,7 @@ void openMP_QRGivensRotations(double ***A) {
 	int i, j;
 	double c, s;
 
-#pragma omp parallel num_threads(3)
+#pragma omp parallel num_threads(NUM_PROCS_3)
 {
 #pragma omp sections nowait
 	{
@@ -33,7 +33,7 @@ void openMP_QRGivensRotations(double ***A) {
 	}
 }
 
-#pragma omp parallel num_threads(2)
+#pragma omp parallel num_threads(NUM_PROCS_2)
 {
 #pragma omp sections nowait
 	{
@@ -54,7 +54,7 @@ void openMP_QRGivensRotations(double ***A) {
 		for(i=SIZE - 1; i > j; i--) { //wiersze
 
 
-#pragma omp parallel num_threads(2)
+#pragma omp parallel num_threads(NUM_PROCS_2)
 {
 #pragma omp sections nowait
 	{
@@ -74,7 +74,7 @@ void openMP_QRGivensRotations(double ***A) {
 
 
 
-#pragma omp parallel num_threads(2)
+#pragma omp parallel num_threads(NUM_PROCS_2)
 {
 #pragma omp sections nowait
 		{
@@ -94,9 +94,8 @@ void openMP_QRGivensRotations(double ***A) {
 //	openMP_printMatrix(&Q," Q ROZWIAZANIE  ");
 //	openMP_printMatrix(&R," R ROZWIAZANIE  ");
 
-	// #mozna zrownoleglic 3 instrukcje
 
-#pragma omp parallel num_threads(3)
+#pragma omp parallel num_threads(NUM_PROCS_3)
 {
 #pragma omp sections nowait
 		{

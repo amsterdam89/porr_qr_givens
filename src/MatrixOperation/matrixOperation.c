@@ -35,6 +35,17 @@ void printMatrix(double ***A, char *s) {
 
 }
 
+void printMatrixDiagonal(double ***A, char *s) {
+	int i;
+
+	printf("wartosc diagonali macierzy %s\n", s);
+	for(i=0; i<SIZE; i++)
+			printf("\t%f\n", (*A)[i][i]);
+		printf("\n");
+
+}
+
+
 void copyArray(double *** R, double ***A) {
 	//mozna zrownoleglic fora
 	int i, j;

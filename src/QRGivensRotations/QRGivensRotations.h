@@ -13,7 +13,7 @@
 
 extern int SIZE;
 
-void qrGivensRotations(double ***A);
+void QRGivensRotations(double ***A, double ***Q, double ***R);
 void setMatrixG(double ***G, int i, int j, double c, double s);
 void givensRotation(double a, double b, double *c, double *s);
 void givensRotation2(double a, double b, double *c, double *s);

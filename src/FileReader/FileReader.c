@@ -17,13 +17,13 @@ bool loadArguments(int argc, char *argv[], char **path, char **name){
 	}
 	else if(argc >=3) {
 		if(argc == 3) {
-			NUM_PROCS = argv[1];
+			NUM_PROCS = atoi(argv[1]);
 			*path = argv[2];
 			*name = "wynik.dat";
 			return true;
 		}
 		else {
-			NUM_PROCS = argv[1];
+			NUM_PROCS = atoi(argv[1]);
 			*path = argv[2];
 			*name = argv[3];
 			return true;

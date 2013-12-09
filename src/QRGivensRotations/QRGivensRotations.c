@@ -7,18 +7,16 @@
 
 #include "QRGivensRotations.h"
 
-void QRGivensRotations(double ***A) {
+void QRGivensRotations(double ***A, double ***Q, double ***R) {
 
-	double **Q, **R, **G;
+	double **G;
 	int i, j;
 	double c, s;
 
-	mallocMatrix(&Q);
-	mallocMatrix(&R);
 	mallocMatrix(&G);
 
-	copyArray(&R, A);
-	setEye(&Q);
+	copyArray(R, A);
+	setEye(Q);
 
 
 	// Algorytm qr Givens rotations
@@ -27,22 +25,19 @@ void QRGivensRotations(double ***A) {
 
 			// #mozna zrownoleglic dwie instrukcje
 			setEye(&G);
-			givensRotation(R[i-1][j], R[i][j], &c, &s);
+			givensRotation((*R)[i-1][j], (*R)[i][j], &c, &s);
 
 			setMatrixG(&G, i, j, c, s);
 
 			// #mozna zrownoleglic dwie instrukcje ponizej
-			multiplyMatrixToSecondWithTransposition(&G, &R);
-			multiplyMatrixToFirst(&Q, &G);
+			multiplyMatrixToSecondWithTransposition(&G, R);
+			multiplyMatrixToFirst(Q, &G);
 
 		}
 
 //	printMatrix(&Q," Q ROZWIAZANIE");
 //	printMatrix(&R," R ROZWIAZANIE");
 
-	// #mozna zrownoleglic 3 instrukcje
-	freeMatrix(&Q);
-	freeMatrix(&R);
 	freeMatrix(&G);
 
 	return;

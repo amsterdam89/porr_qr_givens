@@ -11,8 +11,9 @@
 #include <stdio.h>
 #include "FileReader/FileReader.h"
 #include "FileSave/FileSave.h"
-#include "QRGivensRotations/QRGivensRotations.h"
-#include "openMp/QRGivensRotations/openMP_QRGivensRotations.h"
+#include "QRGivensRotations/QRGivensRotations.h" //TODO rm
+#include "openMp/QRGivensRotations/openMP_QRGivensRotations.h" //tODO rm
+#include "Eigenvalue/Eigenvalue.h"
 #include <time.h>
 
 
@@ -40,10 +41,13 @@ TIME get_time(void)
 #endif
 
 
-extern void QRGivensRotations(double ***A);
-extern void openMP_QRGivensRotations(double ***A);
+extern void getEignvalues(double ***A);
+extern void setNumProcs();
+
 
 int SIZE; //liczba wierszy i kolumn
+int MAX_ITER = 250;
+double EPSILON = 0.00001;
 int NUM_PROCS;
 int NUM_PROCS_2;
 int NUM_PROCS_3;
@@ -64,27 +68,19 @@ int main(int argc, char *argv[]) {
 	if(loadArguments(argc, argv, &path, &name) ) {
 
 		NUM_PROCS = 8; //TODO rm
-		path = "/home/amsterdam/workspace/porr_file.txt"; //TODO do usuniecia
+		path = "/home/amsterdam/workspace/porr/porr_file.txt"; //TODO do usuniecia
+		//path = "/home/amsterdam/workspace/porr/porr_25.txt"; //TODO do usuniecia
 
 		if(loadData(path, &A)) {
 
-			if(NUM_PROCS >= 3) {
-				NUM_PROCS_2 = 2;
-				NUM_PROCS_3 = 3;
-			}
-			else if (NUM_PROCS >= 2) {
-				NUM_PROCS_2 = 2;
-				NUM_PROCS_3 = 2;
-			}
-			else {
-				NUM_PROCS_2 = 1;
-				NUM_PROCS_3 = 1;
-				NUM_PROCS = 1;
-			}
+
+			setNumProcs();
+
 
 			clockQRG = clock();
 		    timeQRG = get_time();
-		    QRGivensRotations(&A);
+		    getEignvalues(&A);
+		    //QRGivensRotations(&A);
 		    clockQRG = clock() - clockQRG;
 		    timeQRG = get_time() - timeQRG;
 		    printf("Elapsed clock for QR Givens Rotations: %.16f seconds\n", (double) clockQRG / CLOCKS_PER_SEC); //TODO rm
@@ -92,7 +88,7 @@ int main(int argc, char *argv[]) {
 
 		    clockQRG_openMP = clock(); //TODO rm
 		    timeQRG_openMP = get_time();
-			openMP_QRGivensRotations(&A);
+			//openMP_QRGivensRotations(&A);
 			clockQRG_openMP = clock() - clockQRG_openMP; //TODO rm
 			timeQRG_openMP = get_time() - timeQRG_openMP;
 			printf("Elapsed clock for QR Givens Rotations in openMp: %.16f seconds\n", (double) clockQRG_openMP / CLOCKS_PER_SEC); //TODO rm
@@ -111,4 +107,22 @@ int main(int argc, char *argv[]) {
 	}
 
 	return EXIT_FAILURE;
+}
+
+void setNumProcs() {
+
+	if(NUM_PROCS >= 3) {
+		NUM_PROCS_2 = 2;
+		NUM_PROCS_3 = 3;
+	}
+	else if (NUM_PROCS >= 2) {
+		NUM_PROCS_2 = 2;
+		NUM_PROCS_3 = 2;
+	}
+	else {
+		NUM_PROCS_2 = 1;
+		NUM_PROCS_3 = 1;
+		NUM_PROCS = 1;
+	}
+
 }

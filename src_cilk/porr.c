@@ -11,10 +11,10 @@
 #include <stdio.h>
 #include "FileReader/FileReader.h"
 #include "FileSave/FileSave.h"
-#include "QRGivensRotations/QRGivensRotations.h" //TODO rm
 #include "Eigenvalue/Eigenvalue.h"
+#include "CilkEigenvalue/Cilk_Eigenvalue.h"
+
 #include <time.h>
-#include "Cilk/QRGivensRotations/Cilk_QRGivensRotations.h"
 
 
 
@@ -67,8 +67,8 @@ int main(int argc, char *argv[]) {
 
 	if(loadArguments(argc, argv, &path, &name) ) {
 
-		NUM_PROCS = 8; //TODO rm
-		path = "/home/amsterdam/workspace/porr/porr_file.txt"; //TODO do usuniecia
+		//NUM_PROCS = 8; //TODO rm
+		//path = "/home/amsterdam/workspace/porr/porr_file.txt"; //TODO do usuniecia
 		//path = "/home/amsterdam/workspace/porr/porr_25.txt"; //TODO do usuniecia
 
 		if(loadData(path, &A)) {
@@ -80,7 +80,6 @@ int main(int argc, char *argv[]) {
 			clockQRG = clock();
 		    timeQRG = get_time();
 		    getEignvalues(&A);
-		    //QRGivensRotations(&A);
 		    clockQRG = clock() - clockQRG;
 		    timeQRG = get_time() - timeQRG;
 		    printf("Elapsed clock for QR Givens Rotations: %.16f seconds\n", (double) clockQRG / CLOCKS_PER_SEC); //TODO rm
@@ -88,17 +87,19 @@ int main(int argc, char *argv[]) {
 
 		    clockQRG_openMP = clock(); //TODO rm
 		    timeQRG_openMP = get_time();
-			//openMP_QRGivensRotations(&A);
+			Cilk_getEignvalues(&A);
 			clockQRG_openMP = clock() - clockQRG_openMP; //TODO rm
 			timeQRG_openMP = get_time() - timeQRG_openMP;
-			printf("Elapsed clock for QR Givens Rotations in openMp: %.16f seconds\n", (double) clockQRG_openMP / CLOCKS_PER_SEC); //TODO rm
-			printf("Elapsed time for QR Givens Rotations in openMp: %.16f \n", (double) timeQRG_openMP / unitsInMilliSecond);
+			printf("Elapsed clock for QR Givens Rotations in cilk: %.16f seconds\n", (double) clockQRG_openMP / CLOCKS_PER_SEC); //TODO rm
+			printf("Elapsed time for QR Givens Rotations in cilk: %.16f \n", (double) timeQRG_openMP / unitsInMilliSecond);
 
 
 			freeMatrix(&A);
 
-			if(saveData(name, (double) timeQRG / unitsInMilliSecond, (double) timeQRG_openMP / unitsInMilliSecond))
+			if(saveData(name, (double) timeQRG / unitsInMilliSecond, (double) timeQRG_openMP / unitsInMilliSecond)){
+				getchar();
 				return EXIT_SUCCESS;
+			}
 			else
 				return EXIT_FAILURE;
 

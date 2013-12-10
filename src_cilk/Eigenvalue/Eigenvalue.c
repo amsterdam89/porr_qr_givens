@@ -41,6 +41,8 @@ void getEignvalues(double ***A) {
 
 }
 
+
+
 bool isDiagonal(double ***A, double epsilon) {
 
 	int i, j;

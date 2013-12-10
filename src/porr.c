@@ -46,10 +46,10 @@ extern void setNumProcs();
 
 
 int SIZE; //liczba wierszy i kolumn
-int MAX_ITER = 250;
-double EPSILON = 0.00001;
-int NUM_PROCS;
-int NUM_PROCS_2;
+int MAX_ITER = 100;
+double EPSILON = 0.0001;
+int NUM_PROCS = 1;
+int NUM_PROCS_2 = 1;
 
 
 int main(int argc, char *argv[]) {
@@ -67,8 +67,8 @@ int main(int argc, char *argv[]) {
 	if(loadArguments(argc, argv, &path, &name) ) {
 
 		NUM_PROCS = 8; //TODO rm
-		path = "/home/amsterdam/workspace/porr/porr_file.txt"; //TODO do usuniecia
-		//path = "/home/amsterdam/workspace/porr/porr_25.txt"; //TODO do usuniecia
+		//path = "/home/amsterdam/workspace/porr/porr_file.txt"; //TODO do usuniecia
+		path = "/home/amsterdam/workspace/porr/porr_25.txt"; //TODO do usuniecia
 
 		if(loadData(path, &A)) {
 
@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
 			clockQRG_openMP = clock() - clockQRG_openMP; //TODO rm
 			timeQRG_openMP = get_time() - timeQRG_openMP;
 			printf("Elapsed clock for QR Givens Rotations in openMp: %.16f seconds\n", (double) clockQRG_openMP / CLOCKS_PER_SEC); //TODO rm
-			printf("Elapsed time for QR Givens Rotations in openMp: %.16f \n", (double) timeQRG_openMP / unitsInMilliSecond);
+			printf("ISTOTNE Elapsed time for QR Givens Rotations in openMp: %.16f ms\n", (double) timeQRG_openMP / unitsInMilliSecond);
 
 			clockQRG = clock();
 		    timeQRG = get_time();
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
 		    clockQRG = clock() - clockQRG;
 		    timeQRG = get_time() - timeQRG;
 		    printf("Elapsed clock for QR Givens Rotations: %.16f seconds\n", (double) clockQRG / CLOCKS_PER_SEC); //TODO rm
-		    printf("Elapsed time for QR Givens Rotations: %.16f \n", (double) timeQRG / unitsInMilliSecond);
+		    printf("ISTOTNE Elapsed time for QR Givens Rotations: %.16f ms\n", (double) timeQRG / unitsInMilliSecond);
 
 
 

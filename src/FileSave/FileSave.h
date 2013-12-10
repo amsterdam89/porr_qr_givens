@@ -12,6 +12,7 @@
 #include "../bool.h"
 
 extern int NUM_PROCS;
+extern int SIZE;
 
 bool saveData(char *path, double timeA, double timeB);
 

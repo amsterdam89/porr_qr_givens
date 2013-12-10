@@ -7,6 +7,7 @@
 
 #include "openMP_QRGivensRotations.h"
 
+
 void openMP_QRGivensRotations(double ***A, double ***Q, double ***R) {
 
 

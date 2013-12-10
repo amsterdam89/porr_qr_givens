@@ -53,15 +53,15 @@ void openMP_copyArray(double *** R, double ***A) {
 	//mozna zrownoleglic fora
 	int i, j;
 
-#pragma omp parallel num_threads(NUM_PROCS)  private(i,j) shared(A, R)
-	{
-#pragma omp for schedule(dynamic, SIZE/NUM_PROCS)
+//#pragma omp parallel num_threads(NUM_PROCS)  private(i,j) shared(A, R)
+//	{
+//#pragma omp for schedule(dynamic, SIZE/NUM_PROCS)
 	for(i=0; i<SIZE; i++)
 		for(j=0; j<SIZE; j++) {
 			(*R)[i][j] = (*A)[i][j];
 
 		}
-	}
+//	}
 }
 
 void openMP_setEye(double ***A) {
@@ -86,13 +86,13 @@ void openMP_setZeros(double ***A) {
 	//mozna zrownoleglic fora
 	int i, j;
 
-#pragma omp parallel num_threads(NUM_PROCS)  private(i,j) shared(A)
-	{
-#pragma omp for schedule(dynamic, SIZE/NUM_PROCS)
+//#pragma omp parallel num_threads(NUM_PROCS)  private(i,j) shared(A)
+//	{
+//#pragma omp for schedule(dynamic, SIZE/NUM_PROCS)
 	for(i=0; i<SIZE; i++)
 		for(j=0; j<SIZE; j++)
 				(*A)[i][j] = 0.0;
-	}
+//	}
 }
 
 void openMP_transposition(double ***A) {
@@ -120,9 +120,9 @@ void openMP_multiplyMatrix(double *** A, double ***B, double ***tmp) {
 
 	int i;
 
-#pragma omp parallel num_threads(NUM_PROCS)  private(i)
-	{
-#pragma omp for schedule(dynamic, SIZE/NUM_PROCS)
+//#pragma omp parallel num_threads(NUM_PROCS) shared(A,B,tmp) private(i)
+//	{
+//#pragma omp for schedule(dynamic, SIZE/NUM_PROCS)
 	for (i=0; i < SIZE; i++) {
 
 		 double*  Arow = (*A)[i];
@@ -138,7 +138,7 @@ void openMP_multiplyMatrix(double *** A, double ***B, double ***tmp) {
 
 			(*tmp)[i][j] = sum;
 	  }
-	}
+//	}
 }
 
 

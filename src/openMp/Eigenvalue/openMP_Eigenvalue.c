@@ -12,8 +12,6 @@ void openMP_getEignvalues(double ***A) {
 	double **Q, **R, **copyA;
 	int i;
 
-	openMP_printMatrix(A, " A ");
-
 	openMP_mallocMatrix(&Q);
 	openMP_mallocMatrix(&R);
 	openMP_mallocMatrix(&copyA);

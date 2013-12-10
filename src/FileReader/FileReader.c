@@ -62,8 +62,6 @@ bool loadData(char *path, double ***A) {
 	setMatrix(f,A);
     fclose(f);
 
-    printMatrix(A, " wczytanej z pliku\n");
-
     return true;
 }
 

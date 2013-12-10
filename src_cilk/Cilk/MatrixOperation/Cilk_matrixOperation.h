@@ -10,6 +10,7 @@ extern int SIZE;
 void Cilk_mallocMatrix(double ***A);
 void Cilk_freeMatrix(double ***A);
 void Cilk_printMatrix(double ***A, char *s);
+void printMatrixDiagonal(double ***A, char *s);
 
 void Cilk_copyArray(double *** R, double ***A);
 void Cilk_setEye(double ***A);

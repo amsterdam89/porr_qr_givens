@@ -1,0 +1,3 @@
+Raport
+Czas działania algorytmu bez zrownoleglania = 0.101000
+Czas działania algorytmu zrownoleglonego w cilk = 0.091000

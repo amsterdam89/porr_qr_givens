@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="12.0"
+	Name="simple-race"
+	ProjectGUID="{2B7F1960-601B-44A4-B6D0-9621DF12E733}"
+	VCNestedProjectGUID="{2228D405-9275-471A-8265-3417A246B6B7}"
+	VCNestedProjectFileName="simple-race.vcproj"
+	>
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>

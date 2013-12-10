@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<snippets>
+  <file name="C:\Users\Martyna\Documents\GitHub\porr_qr_givens\src\Cilk\QRGivensRotations\Cilk_QRGivensRotations.c" md5="">
+    <snippet line="62">
+      <line line="59"/>
+      <line line="60">            Cilk_multiplyMatrixToFirst(&amp;Q, &amp;G);</line>
+      <line line="61"/>
+      <line line="62">}</line>
+      <line line="63"/>
+    </snippet>
+  </file>
+  <file name="C:\Users\Martyna\Documents\GitHub\porr_qr_givens\src\FileReader\FileReader.c" md5="">
+    <snippet line="56">
+      <line line="53">    }</line>
+      <line line="54"/>
+      <line line="55">    fscanf(f, "%d", &amp;SIZE);</line>
+      <line line="56"/>
+      <line line="57">    mallocMatrix(A);</line>
+    </snippet>
+  </file>
+  <file name="C:\Users\Martyna\Documents\GitHub\porr_qr_givens\src\QRGivensRotations\QRGivensRotations.c" md5="">
+    <snippet line="30">
+      <line line="27">            givensRotation((*R)[i-1][j], (*R)[i][j], &amp;c, &amp;s);</line>
+      <line line="28"/>
+      <line line="29">            setMatrixG(&amp;G, i, j, c, s);</line>
+      <line line="30"/>
+      <line line="31">            // #mozna zrownoleglic dwie instrukcje ponizej</line>
+    </snippet>
+  </file>
+</snippets>

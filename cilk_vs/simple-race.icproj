@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="14.0"
+	Name="cilk_vs"
+	ProjectGUID="{2B7F1960-601B-44A4-B6D0-9621DF12E733}"
+	VCNestedProjectGUID="{2228D405-9275-471A-8265-3417A246B6B7}"
+	VCNestedProjectFileName="simple-race.vcproj"
+	>
+	<Configurations>
+		<Configuration
+			Name="Intel_SSA|Win32"
+			>
+			<Tool
+				Name="CppCmplrTool"
+				LevelOfStaticAnalysis="3"
+				ModeOfStaticAnalysis="1"
+			/>
+		</Configuration>
+	</Configurations>
+	<Files/>
+</VisualStudioProject>

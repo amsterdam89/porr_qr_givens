@@ -46,7 +46,7 @@ extern void setNumProcs();
 
 
 int SIZE; //liczba wierszy i kolumn
-int MAX_ITER = 100;
+int MAX_ITER = 120;
 double EPSILON = 0.0001;
 int NUM_PROCS = 1;
 int NUM_PROCS_2 = 1;
@@ -69,6 +69,7 @@ int main(int argc, char *argv[]) {
 		NUM_PROCS = 8; //TODO rm
 		//path = "/home/amsterdam/workspace/porr/porr_file.txt"; //TODO do usuniecia
 		path = "/home/amsterdam/workspace/porr/porr_25.txt"; //TODO do usuniecia
+		name = "wynik_10_12.dat"; //TODO rm
 
 		if(loadData(path, &A)) {
 

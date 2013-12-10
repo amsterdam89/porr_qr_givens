@@ -61,7 +61,7 @@ void openMP_copyArray(double *** R, double ***A) {
 			(*R)[i][j] = (*A)[i][j];
 
 		}
-//	}
+	//}
 }
 
 void openMP_setEye(double ***A) {
@@ -69,16 +69,16 @@ void openMP_setEye(double ***A) {
 	int i, j;
 
 
-#pragma omp parallel num_threads(NUM_PROCS)  private(i,j) shared(A)
-	{
-#pragma omp for schedule(dynamic, SIZE/NUM_PROCS)
+//#pragma omp parallel num_threads(NUM_PROCS)  private(i,j) shared(A)
+//	{
+//#pragma omp for schedule(dynamic, SIZE/NUM_PROCS)
 	for(i=0; i<SIZE; i++)
 		for(j=0; j<SIZE; j++)
 			if(i == j)
 				(*A)[i][j] = 1.0;
 			else
 				(*A)[i][j] = 0.0;
-	}
+//	}
 }
 
 void openMP_setZeros(double ***A) {
@@ -86,9 +86,9 @@ void openMP_setZeros(double ***A) {
 	//mozna zrownoleglic fora
 	int i, j;
 
-//#pragma omp parallel num_threads(NUM_PROCS)  private(i,j) shared(A)
+//#pragma omp parallel num_threads(NUM_PROCS) shared(A)
 //	{
-//#pragma omp for schedule(dynamic, SIZE/NUM_PROCS)
+//#pragma omp for private(i,j) schedule(dynamic, SIZE/NUM_PROCS)
 	for(i=0; i<SIZE; i++)
 		for(j=0; j<SIZE; j++)
 				(*A)[i][j] = 0.0;
@@ -118,7 +118,9 @@ void openMP_transposition(double ***A) {
 
 void openMP_multiplyMatrix(double *** A, double ***B, double ***tmp) {
 
+
 	int i;
+
 
 //#pragma omp parallel num_threads(NUM_PROCS) shared(A,B,tmp) private(i)
 //	{
@@ -128,6 +130,9 @@ void openMP_multiplyMatrix(double *** A, double ***B, double ***tmp) {
 		 double*  Arow = (*A)[i];
 		 int j;
 
+//		 #pragma omp parallel num_threads(NUM_PROCS) shared(Arow,B,tmp)
+//		 	{
+//		 #pragma omp for private(j,k) schedule(dynamic, SIZE/NUM_PROCS) //reduction(+:sum)
 		for (j=0; j < SIZE; j++) {
 
 			double sum = 0.0;
@@ -137,6 +142,8 @@ void openMP_multiplyMatrix(double *** A, double ***B, double ***tmp) {
 				sum += Arow[k] * (*B)[k][j];
 
 			(*tmp)[i][j] = sum;
+			//reduction tak jak by chciało zadziałać i liczy dużo szybciej, ale wyniki są niepoprawne
+
 	  }
 //	}
 }
